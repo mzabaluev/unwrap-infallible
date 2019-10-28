@@ -1,3 +1,6 @@
+#![warn(rust_2018_idioms)]
+#![warn(clippy::all)]
+
 #![cfg_attr(feature = "never_type", feature(never_type))]
 
 use core::hint::unreachable_unchecked;
