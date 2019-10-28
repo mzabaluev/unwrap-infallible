@@ -2,7 +2,7 @@
 
 use core::hint::unreachable_unchecked;
 
-#[cfg(not(feature = "never_type"))]
+#[cfg(not(feature = "blanket_impl"))]
 use core::convert::Infallible;
 
 pub trait UnwrapInfallible {
@@ -10,7 +10,7 @@ pub trait UnwrapInfallible {
     fn unwrap_infallible(self) -> Self::Ok;
 }
 
-#[cfg(feature = "never_type")]
+#[cfg(feature = "blanket_impl")]
 impl<T, E: From<!>> UnwrapInfallible for Result<T, E> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
@@ -20,7 +20,17 @@ impl<T, E: From<!>> UnwrapInfallible for Result<T, E> {
     }
 }
 
-#[cfg(not(feature = "never_type"))]
+#[cfg(all(feature = "never_type", not(feature = "blanket_impl")))]
+impl<T> UnwrapInfallible for Result<T, !> {
+    type Ok = T;
+    fn unwrap_infallible(self) -> T {
+        self.unwrap_or_else(|_| {
+            unsafe { unreachable_unchecked() }
+        })
+    }
+}
+
+#[cfg(not(feature = "blanket_impl"))]
 impl<T> UnwrapInfallible for Result<T, Infallible> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
@@ -59,7 +69,7 @@ mod tests {
         }
     }
 
-    #[cfg(not(feature = "never_type"))]
+    #[cfg(not(feature = "blanket_impl"))]
     impl<T> UnwrapInfallible for Result<T, MyNeverToken> {
         type Ok = T;
         fn unwrap_infallible(self) -> T {

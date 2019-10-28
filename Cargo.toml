@@ -6,5 +6,6 @@ edition = "2018"
 
 [features]
 default = []
-unstable = ["never_type"]
+unstable = ["never_type", "blanket_impl"]
 never_type = []
+blanket_impl = ["never_type"]
