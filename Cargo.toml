@@ -1,0 +1,10 @@
+[package]
+name = "unwrap-infallible"
+version = "0.1.0"
+authors = ["Mikhail Zabaluev <mikhail.zabaluev@gmail.com>"]
+edition = "2018"
+
+[features]
+default = []
+unstable = ["never_type"]
+never_type = []
