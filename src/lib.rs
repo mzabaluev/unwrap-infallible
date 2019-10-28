@@ -50,17 +50,17 @@ mod tests {
         assert!(r.unwrap_infallible());
     }
 
-    enum MyInfallibleToken {}
+    enum MyNeverToken {}
 
     #[cfg(feature = "never_type")]
-    impl From<!> for MyInfallibleToken {
+    impl From<!> for MyNeverToken {
         fn from(_: !) -> Self {
             unsafe { unreachable_unchecked() }
         }
     }
 
     #[cfg(not(feature = "never_type"))]
-    impl<T> UnwrapInfallible for Result<T, MyInfallibleToken> {
+    impl<T> UnwrapInfallible for Result<T, MyNeverToken> {
         type Ok = T;
         fn unwrap_infallible(self) -> T {
             self.unwrap_or_else(|_| {
@@ -71,7 +71,7 @@ mod tests {
 
     #[test]
     fn with_custom_type() {
-        let r: Result<bool, MyInfallibleToken> = Ok(true);
+        let r: Result<bool, MyNeverToken> = Ok(true);
         assert!(r.unwrap_infallible());
     }
 }
