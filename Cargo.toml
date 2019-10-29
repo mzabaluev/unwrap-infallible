@@ -5,6 +5,10 @@ authors = ["Mikhail Zabaluev <mikhail.zabaluev@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
+repository = "https://github.com/mzabaluev/unwrap-infallible"
+description = "Unwrapping Result values with compile-time guarantee of infallibility"
+keywords = ["infallible", "never type", "conversion", "maintainability"]
+categories = ["rust-patterns"]
 
 [features]
 default = []
