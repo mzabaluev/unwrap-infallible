@@ -98,27 +98,4 @@ mod tests {
         let r: Result<bool, !> = Ok(true);
         assert!(r.unwrap_infallible());
     }
-
-    enum MyNeverToken {}
-
-    #[cfg(feature = "never_type")]
-    impl From<MyNeverToken> for ! {
-        fn from(never: MyNeverToken) -> Self {
-            match never {}
-        }
-    }
-
-    #[cfg(not(feature = "blanket_impl"))]
-    impl<T> UnwrapInfallible for Result<T, MyNeverToken> {
-        type Ok = T;
-        fn unwrap_infallible(self) -> T {
-            self.unwrap_or_else(|never| match never {})
-        }
-    }
-
-    #[test]
-    fn with_custom_type() {
-        let r: Result<bool, MyNeverToken> = Ok(true);
-        assert!(r.unwrap_infallible());
-    }
 }
