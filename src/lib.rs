@@ -22,10 +22,7 @@
 #![warn(rust_2018_idioms)]
 #![warn(clippy::all)]
 #![warn(missing_docs)]
-
 #![cfg_attr(feature = "never_type", feature(never_type))]
-
-use core::hint::unreachable_unchecked;
 
 #[cfg(not(feature = "blanket_impl"))]
 use core::convert::Infallible;
@@ -52,9 +49,12 @@ where
 {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
-        self.unwrap_or_else(|_| {
-            unsafe { unreachable_unchecked() }
-        })
+        match self {
+            Ok(v) => v,
+            Err(_) => {
+                unreachable!("error type should not implement `From<!>` if values of it can exist")
+            }
+        }
     }
 }
 
@@ -62,9 +62,7 @@ where
 impl<T> UnwrapInfallible for Result<T, !> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
-        self.unwrap_or_else(|_| {
-            unsafe { unreachable_unchecked() }
-        })
+        self.unwrap_or_else(|never| never)
     }
 }
 
@@ -72,9 +70,7 @@ impl<T> UnwrapInfallible for Result<T, !> {
 impl<T> UnwrapInfallible for Result<T, Infallible> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
-        self.unwrap_or_else(|_: Infallible| {
-            unsafe { unreachable_unchecked() }
-        })
+        self.unwrap_or_else(|never| match never {})
     }
 }
 
@@ -82,7 +78,6 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 mod tests {
     use super::UnwrapInfallible;
     use core::convert::TryFrom;
-    use core::hint::unreachable_unchecked;
 
     #[test]
     fn with_infallible() {
@@ -103,7 +98,7 @@ mod tests {
     #[cfg(feature = "never_type")]
     impl From<!> for MyNeverToken {
         fn from(_: !) -> Self {
-            unsafe { unreachable_unchecked() }
+            unsafe { core::hint::unreachable_unchecked() }
         }
     }
 
@@ -111,9 +106,7 @@ mod tests {
     impl<T> UnwrapInfallible for Result<T, MyNeverToken> {
         type Ok = T;
         fn unwrap_infallible(self) -> T {
-            self.unwrap_or_else(|_| {
-                unsafe { unreachable_unchecked() }
-            })
+            self.unwrap_or_else(|never| match never {})
         }
     }
 
