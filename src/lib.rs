@@ -7,8 +7,13 @@
 //! # Example
 //!
 //! ```
+//! # #![cfg_attr(feature = "never_type", feature(never_type))]
+//! #
 //! use unwrap_infallible::UnwrapInfallible;
+//! # #[cfg(not(feature = "blanket_impl"))]
 //! use std::convert::Infallible;
+//! # #[cfg(feature = "blanket_impl")]
+//! # type Infallible = !;
 //!
 //! fn always_sunny() -> Result<String, Infallible> {
 //!     Ok("it's always sunny!".into())
@@ -45,15 +50,13 @@ pub trait UnwrapInfallible {
 #[cfg(feature = "blanket_impl")]
 impl<T, E> UnwrapInfallible for Result<T, E>
 where
-    E: From<!>,
+    !: From<E>,
 {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
         match self {
             Ok(v) => v,
-            Err(_) => {
-                unreachable!("error type should not implement `From<!>` if values of it can exist")
-            }
+            Err(e) => Into::<!>::into(e),
         }
     }
 }
@@ -77,10 +80,13 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 #[cfg(test)]
 mod tests {
     use super::UnwrapInfallible;
-    use core::convert::TryFrom;
 
+    /// Hmm, Infallible is not Into<!> yet
+    #[cfg(not(feature = "blanket_impl"))]
     #[test]
     fn with_infallible() {
+        use core::convert::TryFrom;
+
         let a = 42u8;
         let a = u64::try_from(a).unwrap_infallible();
         assert_eq!(a, 42u64);
@@ -96,9 +102,9 @@ mod tests {
     enum MyNeverToken {}
 
     #[cfg(feature = "never_type")]
-    impl From<!> for MyNeverToken {
-        fn from(_: !) -> Self {
-            unsafe { core::hint::unreachable_unchecked() }
+    impl From<MyNeverToken> for ! {
+        fn from(never: MyNeverToken) -> Self {
+            match never {}
         }
     }
 
