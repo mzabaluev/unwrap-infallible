@@ -19,7 +19,7 @@
 //!     Ok("it's always sunny!".into())
 //! }
 //!
-//! fn print_weather() {
+//! fn main() {
 //!     println!("{}", always_sunny().unwrap_infallible());
 //! }
 //! ```
