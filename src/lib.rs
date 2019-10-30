@@ -46,7 +46,10 @@ pub trait UnwrapInfallible {
 }
 
 #[cfg(feature = "blanket_impl")]
-impl<T, E: From<!>> UnwrapInfallible for Result<T, E> {
+impl<T, E> UnwrapInfallible for Result<T, E>
+where
+    E: From<!>,
+{
     type Ok = T;
     fn unwrap_infallible(self) -> T {
         self.unwrap_or_else(|_| {
