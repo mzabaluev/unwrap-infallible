@@ -53,7 +53,7 @@ impl<T, E: Into<!>> UnwrapInfallible for Result<T, E> {
     fn unwrap_infallible(self) -> T {
         match self {
             Ok(v) => v,
-            Err(e) => Into::<!>::into(e),
+            Err(e) => e.into(),
         }
     }
 }
