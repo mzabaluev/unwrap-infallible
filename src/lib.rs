@@ -27,6 +27,7 @@
 #![warn(rust_2018_idioms)]
 #![warn(clippy::all)]
 #![warn(missing_docs)]
+#![no_std]
 #![cfg_attr(feature = "never_type", feature(never_type))]
 
 #[cfg(not(feature = "blanket_impl"))]
@@ -78,7 +79,7 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 mod tests {
     use super::UnwrapInfallible;
 
-    /// Hmm, Infallible is not Into<!> yet
+    // Hmm, Infallible is not Into<!> yet
     #[cfg(not(feature = "blanket_impl"))]
     #[test]
     fn with_infallible() {
