@@ -79,8 +79,6 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 mod tests {
     use super::UnwrapInfallible;
 
-    // Hmm, Infallible is not Into<!> yet
-    #[cfg(not(feature = "blanket_impl"))]
     #[test]
     fn with_infallible() {
         use core::convert::TryFrom;
