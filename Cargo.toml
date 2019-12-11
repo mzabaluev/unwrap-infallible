@@ -15,6 +15,3 @@ default = []
 unstable = ["never_type", "blanket_impl"]
 never_type = []
 blanket_impl = ["never_type"]
-
-[package.metadata.docs.rs]
-features = ["never_type"]
