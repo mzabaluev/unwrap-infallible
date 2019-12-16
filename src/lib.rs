@@ -30,7 +30,7 @@
 #![no_std]
 #![cfg_attr(feature = "never_type", feature(never_type))]
 
-#[cfg(all(not(feature = "never_type"), not(feature = "blanket_impl")))]
+#[cfg(not(feature = "blanket_impl"))]
 use core::convert::Infallible;
 
 /// Unwrapping an infallible result into its success value.
@@ -67,7 +67,7 @@ impl<T> UnwrapInfallible for Result<T, !> {
     }
 }
 
-#[cfg(all(not(feature = "never_type"), not(feature = "blanket_impl")))]
+#[cfg(not(feature = "blanket_impl"))]
 impl<T> UnwrapInfallible for Result<T, Infallible> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
