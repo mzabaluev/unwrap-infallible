@@ -12,6 +12,5 @@ categories = ["rust-patterns"]
 
 [features]
 default = []
-unstable = ["never_type", "blanket_impl"]
+unstable = ["never_type"]
 never_type = []
-blanket_impl = ["never_type"]

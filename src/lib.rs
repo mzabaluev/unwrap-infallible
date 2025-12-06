@@ -10,10 +10,7 @@
 //! # #![cfg_attr(feature = "never_type", feature(never_type))]
 //! #
 //! use unwrap_infallible::UnwrapInfallible;
-//! # #[cfg(not(feature = "blanket_impl"))]
 //! use std::convert::Infallible;
-//! # #[cfg(feature = "blanket_impl")]
-//! # type Infallible = !;
 //!
 //! fn always_sunny() -> Result<String, Infallible> {
 //!     Ok("it's always sunny!".into())
@@ -30,7 +27,6 @@
 #![no_std]
 #![cfg_attr(feature = "never_type", feature(never_type))]
 
-#[cfg(not(feature = "blanket_impl"))]
 use core::convert::Infallible;
 
 /// Unwrapping an infallible result into its success value.
@@ -48,18 +44,7 @@ pub trait UnwrapInfallible {
     fn unwrap_infallible(self) -> Self::Ok;
 }
 
-#[cfg(feature = "blanket_impl")]
-impl<T, E: Into<!>> UnwrapInfallible for Result<T, E> {
-    type Ok = T;
-    fn unwrap_infallible(self) -> T {
-        match self {
-            Ok(v) => v,
-            Err(e) => e.into(),
-        }
-    }
-}
-
-#[cfg(all(feature = "never_type", not(feature = "blanket_impl")))]
+#[cfg(feature = "never_type")]
 impl<T> UnwrapInfallible for Result<T, !> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
@@ -67,7 +52,6 @@ impl<T> UnwrapInfallible for Result<T, !> {
     }
 }
 
-#[cfg(not(feature = "blanket_impl"))]
 impl<T> UnwrapInfallible for Result<T, Infallible> {
     type Ok = T;
     fn unwrap_infallible(self) -> T {
@@ -79,8 +63,6 @@ impl<T> UnwrapInfallible for Result<T, Infallible> {
 mod tests {
     use super::UnwrapInfallible;
 
-    // Hmm, Infallible is not Into<!> yet
-    #[cfg(not(feature = "blanket_impl"))]
     #[test]
     fn with_infallible() {
         use core::convert::TryFrom;
