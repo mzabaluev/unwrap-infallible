@@ -21,7 +21,6 @@
 //! }
 //! ```
 
-#![warn(rust_2018_idioms)]
 #![warn(clippy::all)]
 #![warn(missing_docs)]
 #![no_std]
